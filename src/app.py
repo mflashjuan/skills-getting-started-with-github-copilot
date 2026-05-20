@@ -41,6 +41,46 @@ activities = {
     }
 }
 
+# Additional activities
+activities.update({
+    "Soccer Team": {
+        "description": "Competitive soccer team practicing tactical play and fitness",
+        "schedule": "Tuesdays and Thursdays, 4:00 PM - 6:00 PM",
+        "max_participants": 22,
+        "participants": ["liam@mergington.edu", "noah@mergington.edu"]
+    },
+    "Basketball Club": {
+        "description": "Pickup games and skill development for basketball players",
+        "schedule": "Wednesdays, 5:00 PM - 7:00 PM",
+        "max_participants": 18,
+        "participants": ["ava@mergington.edu", "isabella@mergington.edu"]
+    },
+    "Art Club": {
+        "description": "Explore drawing, painting, and mixed media projects",
+        "schedule": "Mondays, 3:30 PM - 5:00 PM",
+        "max_participants": 16,
+        "participants": ["mia@mergington.edu", "charlotte@mergington.edu"]
+    },
+    "Drama Club": {
+        "description": "Acting workshops and production of school plays",
+        "schedule": "Fridays, 3:30 PM - 6:00 PM",
+        "max_participants": 25,
+        "participants": ["lucas@mergington.edu", "grace@mergington.edu"]
+    },
+    "Robotics Club": {
+        "description": "Design and build robots for competitions and learning",
+        "schedule": "Tuesdays, 4:00 PM - 6:00 PM",
+        "max_participants": 12,
+        "participants": ["oliver@mergington.edu", "elijah@mergington.edu"]
+    },
+    "Debate Team": {
+        "description": "Practice public speaking and competitive debating",
+        "schedule": "Thursdays, 4:00 PM - 5:30 PM",
+        "max_participants": 14,
+        "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+    }
+})
+
 
 @app.get("/")
 def root():
@@ -61,6 +101,14 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Get the specific activity
     activity = activities[activity_name]
+
+    # Validate that the student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail=f"{email} is already signed up for {activity_name}")
+
+    # Validate that the activity has not reached its maximum capacity
+    if len(activity["participants"]) >= activity["max_participants"]:
+        raise HTTPException(status_code=400, detail=f"{activity_name} has reached its maximum capacity")
 
     # Add student
     activity["participants"].append(email)
